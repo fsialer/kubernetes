@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: courses-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courses-service
+  template:
+    metadata:
+      labels:
+        app: courses-service
+    spec:
+      containers:
+        - image: feralexis007/courses-service:latest
+          name: courses-service
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: courses-service
+                  key: db_host
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: courses-service
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: courses-service
+                  key: db_password
+            - name: STUDENTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: courses-service
+                  key: students_url

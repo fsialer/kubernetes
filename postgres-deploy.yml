@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres16
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres16
+  template:
+    metadata:
+      labels:
+        app: postgres16
+    spec:
+      containers:
+        - image: postgres:16-alpine
+          name: postgres16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              #value: root => esto se soloca cuando quieres poner los datso en duro
+              valueFrom:
+                secretKeyRef:
+                  name: students-service
+                  key: db_password
+            - name: POSTGRES_USER
+              #value: root => esto se soloca cuando quieres poner los datso en duro
+              valueFrom:
+                secretKeyRef:
+                  name: students-service
+                  key: db_username
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: students-service
+                  key: db_name
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+

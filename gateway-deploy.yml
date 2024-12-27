@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-server
+  template:
+    metadata:
+      labels:
+        app: gateway-server
+    spec:
+      containers:
+        - image: feralexis007/gateway-server:1.0.1
+          name: gateway-server
+          ports:
+            - containerPort: 8090
+          env:
+            - name: STUDENTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-server
+                  key: students_url
+            - name: COURSES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-server
+                  key: courses_url
+            - name: AUTH_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-server
+                  key: auth_server
+            - name: REDIRECT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway-server
+                  key: redirect_url

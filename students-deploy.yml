@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: students-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: students-service
+  template:
+    metadata:
+      labels:
+        app: students-service
+    spec:
+      containers:
+        - image: feralexis007/students-service:latest
+          name: students-service
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: students-service
+                  key: db_host
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: students-service
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: students-service
+                  key: db_password
+            - name: COURSES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: students-service
+                  key: courses_url
